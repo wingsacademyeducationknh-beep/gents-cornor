@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GENTS GARAGE | Shop</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Outfit:wght@300;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <nav>
+        <div class="container">
+            <a href="index.html" class="logo">GENTS <span>GARAGE</span></a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html" class="active">Shop</a></li>
+                <li><a href="about.html">About</a></li>
+                <li id="admin-nav-item" style="display: none;"><a href="admin.html">Admin</a></li>
+                <li id="profile-nav-item" style="display: none;"><a href="profile.html">My Profile</a></li>
+                <li id="login-nav-item"><a href="login.html">Login / Sign Up</a></li>
+                <li id="logout-nav-item" style="display: none;"><a href="#" onclick="logout()">Logout</a></li>
+            </ul>
+            <a href="shop.html" class="btn" style="padding: 8px 20px; font-size: 0.8rem;">Shop Now</a>
+        </div>
+    </nav>
+
+    <header class="section" style="padding-bottom: 20px; background: rgba(255,255,255,0.02)">
+        <div class="container">
+            <h1 style="font-size: 3rem;">OUR <span>COLLECTION</span></h1>
+            <p style="color: var(--text-dim);">Strictly Gents. Strictly Premium.</p>
+        </div>
+    </header>
+
+    <section class="section">
+        <div class="container">
+            <div class="grid" id="productGrid">
+                <!-- 55+ Products injected by JS -->
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="logo">GENTS <span>GARAGE</span></div>
+            <p>&copy; 2026 Gents Garage Menswear. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

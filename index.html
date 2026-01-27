@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GENTS GARAGE | Home</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Outfit:wght@300;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <nav>
+        <div class="container">
+            <a href="index.html" class="logo">GENTS <span>GARAGE</span></a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="shop.html">Shop</a></li>
+                <li><a href="about.html">About</a></li>
+                <li id="admin-nav-item" style="display: none;"><a href="admin.html">Admin</a></li>
+                <li id="profile-nav-item" style="display: none;"><a href="profile.html">My Profile</a></li>
+                <li id="login-nav-item"><a href="login.html">Login / Sign Up</a></li>
+                <li id="logout-nav-item" style="display: none;"><a href="#" onclick="logout()">Logout</a></li>
+            </ul>
+            <a href="shop.html" class="btn" style="padding: 8px 20px; font-size: 0.8rem;">Shop Now</a>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Gentlemen, <br> Start Your Style.</h1>
+                <p>Premium menswear for the modern man who values class, durability, and a rugged edge. Welcome to the
+                    Garage.</p>
+                <div class="hero-btns">
+                    <a href="shop.html" class="btn">Explore Collection</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="section">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 20px;">Featured <span>Arrivals</span></h2>
+            <p style="text-align: center; color: var(--text-dim);">A curated selection of our best-selling gents items.
+            </p>
+            <div class="grid" id="featuredGrid">
+                <!-- Products injected by JS -->
+            </div>
+            <div style="text-align: center; margin-top: 50px;">
+                <a href="shop.html" class="btn" style="background: transparent; border-color: var(--primary);">View Full
+                    Shop</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="logo">GENTS <span>GARAGE</span></div>
+            <p>&copy; 2026 Gents Garage Menswear. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

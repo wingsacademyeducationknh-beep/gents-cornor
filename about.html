@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GENTS GARAGE | About</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Outfit:wght@300;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <nav>
+        <div class="container">
+            <a href="index.html" class="logo">GENTS <span>GARAGE</span></a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html">Shop</a></li>
+                <li><a href="about.html" class="active">About</a></li>
+                <li id="admin-nav-item" style="display: none;"><a href="admin.html">Admin</a></li>
+                <li id="profile-nav-item" style="display: none;"><a href="profile.html">My Profile</a></li>
+                <li id="login-nav-item"><a href="login.html">Login / Sign Up</a></li>
+                <li id="logout-nav-item" style="display: none;"><a href="#" onclick="logout()">Logout</a></li>
+            </ul>
+            <a href="shop.html" class="btn" style="padding: 8px 20px; font-size: 0.8rem;">Shop Now</a>
+        </div>
+    </nav>
+
+    <header class="section" style="padding-bottom: 20px; background: rgba(255,255,255,0.02)">
+        <div class="container">
+            <h1 style="font-size: 3rem;">OUR <span>STORY</span></h1>
+            <p style="color: var(--text-dim);">Built for the bold, since 2024.</p>
+        </div>
+    </header>
+
+    <section class="section">
+        <div class="container">
+            <div class="about-flex">
+                <div class="about-text">
+                    <h2>Built For <span>The Bold</span></h2>
+                    <p style="color: var(--text-dim); line-height: 1.8; margin-top: 20px;">
+                        At Gents Garage, we believe clothing should be like a classic engine: well-built, enduring, and
+                        meticulously maintained. Our shop provides everything a modern man needs to look sharp, from
+                        tailored suits to rugged casuals.
+                    </p>
+                    <p style="color: var(--text-dim); line-height: 1.8; margin-top: 10px;">
+                        Established in 2024, we've become the go-to spot for men who want quality without compromise. We
+                        focus exclusively on masculine styles, ensuring a curated experience for the modern gentleman.
+                    </p>
+                </div>
+                <div class="about-image">
+                    <img src="about_shop.png" alt="About Gents Garage">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="logo">GENTS <span>GARAGE</span></div>
+            <p>&copy; 2026 Gents Garage Menswear. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

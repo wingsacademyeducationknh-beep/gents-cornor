@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GENTS GARAGE | My Profile</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Outfit:wght@300;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <nav>
+        <div class="container">
+            <a href="index.html" class="logo">GENTS <span>GARAGE</span></a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html">Shop</a></li>
+                <li><a href="about.html">About</a></li>
+                <li id="admin-nav-item" style="display: none;"><a href="admin.html">Admin</a></li>
+                <li id="profile-nav-item" style="display: none;"><a href="profile.html" class="active">My Profile</a>
+                </li>
+                <li id="login-nav-item"><a href="login.html">Login / Sign Up</a></li>
+                <li id="logout-nav-item" style="display: none;"><a href="#" onclick="logout()">Logout</a></li>
+            </ul>
+            <a href="shop.html" class="btn" style="padding: 8px 20px; font-size: 0.8rem;">Shop Now</a>
+        </div>
+    </nav>
+
+    <header class="section" style="padding-bottom: 20px; background: rgba(255,255,255,0.02)">
+        <div class="container">
+            <h1>MY <span>PROFILE</span></h1>
+            <p style="color: var(--text-dim);">Manage your personal account settings.</p>
+        </div>
+    </header>
+
+    <section class="section">
+        <div class="container">
+            <div id="profile-info">
+                <h3>Account <span>Information</span></h3>
+                <p style="margin-top: 10px;">Username: <span id="profile-username"
+                        style="color: var(--primary); font-weight: bold;"></span></p>
+                <p>Mobile: <span id="profile-mobile" style="color: var(--primary); font-weight: bold;"></span></p>
+            </div>
+
+            <div class="admin-form" style="margin-top: 40px;">
+                <h3>Security <span>Center</span></h3>
+                <p style="margin-bottom: 15px; color: var(--text-dim);">Update your garage password below.</p>
+                <input type="password" id="oldPass" placeholder="Current Password">
+                <input type="password" id="newPass" placeholder="New Strong Password">
+                <button class="btn" onclick="changePassword()" style="width: fit-content;">Save New Password</button>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="logo">GENTS <span>GARAGE</span></div>
+            <p>&copy; 2026 Gents Garage Menswear. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Specific Profile Logic
+        if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = 'login.html';
+        }
+
+        function changePassword() {
+            const role = sessionStorage.getItem('userRole');
+            const id = sessionStorage.getItem('userId');
+            const oldP = document.getElementById('oldPass').value;
+            const newP = document.getElementById('newPass').value;
+
+            if (role === 'admin') {
+                alert("The main Admin password can only be changed via server-side security.");
+                return;
+            }
+
+            const userIndex = users.findIndex(u => u.mobile === id && u.password === oldP);
+            if (userIndex !== -1) {
+                users[userIndex].password = newP;
+                localStorage.setItem('gents_users', JSON.stringify(users));
+                alert("Success! Your password has been updated.");
+                document.getElementById('oldPass').value = "";
+                document.getElementById('newPass').value = "";
+            } else {
+                alert("Current password incorrect. Please try again.");
+            }
+        }
+    </script>
+</body>
+
+</html>
