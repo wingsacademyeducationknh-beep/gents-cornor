@@ -141,7 +141,6 @@
             const price = document.getElementById('pPrice').value;
             const img = document.getElementById('pImg').value || "https://images.unsplash.com/photo-1516257984877-a03a01ae1b89?auto=format&fit=crop&q=80&w=500";
             if (name && price) {
-                // In a real app, this would hit an API. Here it just alerts.
                 alert(`Added ${name} to internal catalog buffer!`);
             }
         }
@@ -155,42 +154,6 @@
             document.getElementById('editRole').value = user.role || 'user';
             document.getElementById('editPass').value = '';
             document.getElementById('editUserModal').style.display = 'block';
-        }
-
-        function closeEditUserModal() {
-            document.getElementById('editUserModal').style.display = 'none';
-        }
-
-        function saveEditedUser() {
-            const originalMobile = document.getElementById('editOriginalMobile').value;
-            const newUsername = document.getElementById('editUsername').value.trim();
-            const newMobile = document.getElementById('editMobile').value.trim();
-            const newRole = document.getElementById('editRole').value;
-            const newPass = document.getElementById('editPass').value;
-
-            const userIndex = users.findIndex(u => u.mobile === originalMobile);
-            if (userIndex === -1) return;
-
-            const usernameRegex = /^[a-z0-9_]{4,16}$/;
-            if (!usernameRegex.test(newUsername)) { alert('Check username format!'); return; }
-
-            users[userIndex].username = newUsername;
-            users[userIndex].mobile = newMobile;
-            users[userIndex].role = newRole;
-            if (newPass) users[userIndex].password = newPass;
-
-            localStorage.setItem('gents_users', JSON.stringify(users));
-            alert('Member details updated!');
-            renderUsers();
-            closeEditUserModal();
-        }
-
-        function deleteUser(mobile) {
-            if (!confirm(`Delete user ${mobile}?`)) return;
-            users = users.filter(u => u.mobile !== mobile);
-            localStorage.setItem('gents_users', JSON.stringify(users));
-            alert('Member removed.');
-            renderUsers();
         }
     </script>
 </body>

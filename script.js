@@ -81,7 +81,18 @@ const ADMIN_ID = "admin";
 const ADMIN_PASS = "1234";
 let mockOtp = "";
 
-let users = JSON.parse(localStorage.getItem('gents_users')) || [];
+let users = [];
+
+async function fetchUsers() {
+    try {
+        const res = await fetch('/api/database');
+        users = await res.json();
+        return users;
+    } catch (e) {
+        console.error("Failed to fetch users:", e);
+        return [];
+    }
+}
 
 // --- UI Common Logic ---
 window.addEventListener('scroll', () => {
@@ -91,7 +102,7 @@ window.addEventListener('scroll', () => {
     }
 });
 
-function updateUI() {
+async function updateUI() {
     const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
     const role = sessionStorage.getItem('userRole');
 
@@ -104,6 +115,17 @@ function updateUI() {
     if (logoutItem) logoutItem.classList.toggle('hidden', !isLoggedIn);
     if (profileItem) profileItem.style.display = (isLoggedIn && role === 'user') ? 'block' : 'none';
     if (adminItem) adminItem.style.display = (isLoggedIn && role === 'admin') ? 'block' : 'none';
+
+    // Update button text if on home or other pages
+    const shopBtns = document.querySelectorAll('.btn');
+    shopBtns.forEach(btn => {
+        if (btn.innerText.toLowerCase().includes('shop') || btn.innerText.toLowerCase().includes('collection') || btn.innerText.toLowerCase().includes('garage')) {
+            if (isLoggedIn) {
+                if (btn.innerText === "Shop Now") btn.innerText = "Enter Shop";
+                if (btn.innerText === "Explore Collection") btn.innerText = "View Garage";
+            }
+        }
+    });
 
     // Populate profile if on profile page
     const pUser = document.getElementById('profile-username');
@@ -120,8 +142,6 @@ function logout() {
 }
 
 function openLoginModal() {
-    // If we're on a page with the modal, open it. 
-    // Otherwise, redirect to login.html
     const modal = document.getElementById('loginModal');
     if (modal) {
         modal.style.display = 'block';
@@ -136,23 +156,32 @@ function closeLoginModal() {
 }
 
 function switchModalTab(tab) {
-    document.getElementById('tab-login').classList.toggle('active', tab === 'login');
-    document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
-    document.getElementById('login-view').classList.toggle('hidden', tab !== 'login');
-    document.getElementById('signup-view').classList.toggle('hidden', tab !== 'signup');
+    const tabL = document.getElementById('tab-login');
+    const tabS = document.getElementById('tab-signup');
+    const viewL = document.getElementById('login-view');
+    const viewS = document.getElementById('signup-view');
+
+    if (tabL) tabL.classList.toggle('active', tab === 'login');
+    if (tabS) tabS.classList.toggle('active', tab === 'signup');
+    if (viewL) viewL.classList.toggle('hidden', tab !== 'login');
+    if (viewS) viewS.classList.toggle('hidden', tab !== 'signup');
 }
 
 function getOtp() {
-    const mobile = document.getElementById('signupMobile').value;
+    const mobileField = document.getElementById('signupMobile');
+    if (!mobileField) return;
+    const mobile = mobileField.value;
     if (mobile.length < 10) {
         alert("Please enter a valid mobile number.");
         return;
     }
-    mockOtp = Math.floor(100000 + Math.random() * 9000003).toString().substring(0, 6);
+    mockOtp = Math.floor(100000 + Math.random() * 900000).toString();
     alert(`YOUR VERIFICATION OTP IS: ${mockOtp}`);
 }
 
-function handleAuth(type) {
+async function handleAuth(type) {
+    await fetchUsers(); // Ensure fresh data on every auth attempt
+
     if (type === 'login') {
         const id = document.getElementById('loginId').value;
         const pass = document.getElementById('loginPass').value;
@@ -183,7 +212,7 @@ function handleAuth(type) {
 
         const usernameRegex = /^[a-z0-9_]{4,16}$/;
         if (!usernameRegex.test(username)) {
-            alert('Username must be 4-16 characters long (small letters, numbers, underscores only).');
+            alert('Username must be 4-16 characters long (lowercase, numbers, underscores only).');
             return;
         }
 
@@ -206,10 +235,19 @@ function handleAuth(type) {
         }
 
         const newUser = { username, mobile, password: pass, role: 'user' };
-        users.push(newUser);
-        localStorage.setItem('gents_users', JSON.stringify(users));
-        alert('Sign Up Successful! Please Login.');
-        switchModalTab('login');
+
+        const res = await fetch('/api/database', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'signup', payload: newUser })
+        });
+
+        if (res.ok) {
+            alert('Sign Up Successful! Please Login.');
+            switchModalTab('login');
+        } else {
+            alert('Database Error. Please try again later.');
+        }
     }
 }
 
@@ -247,14 +285,113 @@ function renderProductGrid(targetId, limit = null) {
 }
 
 // Initial Load
-window.onload = () => {
+window.onload = async () => {
+    await fetchUsers(); // Initial DB fetch
     updateUI();
-    // Add specific init calls for pages
+
     if (document.getElementById('productGrid')) renderProductGrid('productGrid');
     if (document.getElementById('featuredGrid')) renderProductGrid('featuredGrid', 8);
     if (typeof initAdmin === 'function') initAdmin();
 };
 
 window.onclick = (e) => {
-    if (e.target.classList.contains('modal')) e.target.style.display = 'none';
+    if (e.target.classList.contains('modal')) {
+        e.target.style.display = 'none';
+    }
+}
+
+async function saveEditedUser() {
+    const originalMobile = document.getElementById('editOriginalMobile').value;
+    const newUsername = document.getElementById('editUsername').value.trim();
+    const newMobile = document.getElementById('editMobile').value.trim();
+    const newRole = document.getElementById('editRole').value;
+    const newPass = document.getElementById('editPass').value;
+
+    const usernameRegex = /^[a-z0-9_]{4,16}$/;
+    if (!usernameRegex.test(newUsername)) {
+        alert('Invalid Username format (4-16 lowercase/numbers/_ only)!');
+        return;
+    }
+
+    const payload = { originalMobile, username: newUsername, mobile: newMobile, role: newRole, password: newPass };
+
+    try {
+        const res = await fetch('/api/database', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'update', payload })
+        });
+
+        if (res.ok) {
+            alert('Member details updated in cloud!');
+            await fetchUsers();
+            if (typeof renderUsers === 'function') renderUsers();
+            closeEditUserModal();
+        } else {
+            alert('Cloud Database Sync Failed.');
+        }
+    } catch (e) {
+        console.error(e);
+        alert('Network Error.');
+    }
+}
+
+async function deleteUser(mobile) {
+    if (!confirm(`Permanently remove member ${mobile} from cloud?`)) return;
+
+    try {
+        const res = await fetch('/api/database', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'delete', payload: { mobile } })
+        });
+
+        if (res.ok) {
+            alert('Member removed from cloud storage.');
+            await fetchUsers();
+            if (typeof renderUsers === 'function') renderUsers();
+        }
+    } catch (e) {
+        alert('Network Error.');
+    }
+}
+
+async function changePassword() {
+    const role = sessionStorage.getItem('userRole');
+    const id = sessionStorage.getItem('userId');
+    const oldP = document.getElementById('oldPass').value;
+    const newP = document.getElementById('newPass').value;
+
+    if (role === 'admin') {
+        alert("The main Admin password can only be changed via Vercel Environment Variables.");
+        return;
+    }
+
+    await fetchUsers();
+    const userIndex = users.findIndex(u => u.mobile === id && u.password === oldP);
+
+    if (userIndex !== -1) {
+        const userData = users[userIndex];
+        const res = await fetch('/api/database', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'update',
+                payload: { ...userData, originalMobile: id, password: newP }
+            })
+        });
+
+        if (res.ok) {
+            alert("Success! Your cloud profile has been updated.");
+            document.getElementById('oldPass').value = "";
+            document.getElementById('newPass').value = "";
+        }
+    } else {
+        alert("Current password incorrect.");
+    }
+}
+
+function closeEditUserModal() {
+    const modal = document.getElementById('editUserModal');
+    if (modal) modal.style.display = 'none';
 }

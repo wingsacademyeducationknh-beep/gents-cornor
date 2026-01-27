@@ -71,29 +71,6 @@
         if (sessionStorage.getItem('isLoggedIn') !== 'true') {
             window.location.href = 'login.html';
         }
-
-        function changePassword() {
-            const role = sessionStorage.getItem('userRole');
-            const id = sessionStorage.getItem('userId');
-            const oldP = document.getElementById('oldPass').value;
-            const newP = document.getElementById('newPass').value;
-
-            if (role === 'admin') {
-                alert("The main Admin password can only be changed via server-side security.");
-                return;
-            }
-
-            const userIndex = users.findIndex(u => u.mobile === id && u.password === oldP);
-            if (userIndex !== -1) {
-                users[userIndex].password = newP;
-                localStorage.setItem('gents_users', JSON.stringify(users));
-                alert("Success! Your password has been updated.");
-                document.getElementById('oldPass').value = "";
-                document.getElementById('newPass').value = "";
-            } else {
-                alert("Current password incorrect. Please try again.");
-            }
-        }
     </script>
 </body>
 
