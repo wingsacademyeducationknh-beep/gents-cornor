@@ -1,0 +1,13 @@
+{
+  "name": "gents-cornor",
+  "version": "1.0.0",
+  "description": "Gents Garage Menswear Website",
+  "type": "module",
+  "main": "api/database.js",
+  "dependencies": {
+    "@vercel/kv": "^1.0.1"
+  },
+  "scripts": {
+    "start": "serve ."
+  }
+}

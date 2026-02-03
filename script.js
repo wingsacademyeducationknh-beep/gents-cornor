@@ -94,6 +94,19 @@ async function fetchUsers() {
     }
 }
 
+let dbProducts = [];
+
+async function fetchProducts() {
+    try {
+        const res = await fetch('/api/database?type=products');
+        dbProducts = await res.json();
+        return dbProducts;
+    } catch (e) {
+        console.error("Failed to fetch products:", e);
+        return [];
+    }
+}
+
 // --- UI Common Logic ---
 window.addEventListener('scroll', () => {
     const nav = document.querySelector('nav');
@@ -264,15 +277,16 @@ function completeLogin(name) {
 }
 
 // --- Shared Utility for rendering ---
-function renderProductGrid(targetId, limit = null) {
+async function renderProductGrid(targetId, limit = null) {
     const grid = document.getElementById(targetId);
     if (!grid) return;
 
-    let items = products;
-    if (limit) items = products.slice(0, limit);
+    // Use DB products if available, otherwise fallback to hardcoded ones (for initial setup)
+    let items = dbProducts.length > 0 ? dbProducts : products;
+    if (limit) items = items.slice(0, limit);
 
     grid.innerHTML = items.map(p => `
-        <div class="product-card">
+        <div class="product-card" id="product-${p.id}">
             <div class="product-img">
                 <img src="${p.img}" alt="${p.name}" loading="lazy">
             </div>
@@ -286,11 +300,12 @@ function renderProductGrid(targetId, limit = null) {
 
 // Initial Load
 window.onload = async () => {
-    await fetchUsers(); // Initial DB fetch
+    await fetchUsers();
+    await fetchProducts(); // Fetch DB products
     updateUI();
 
-    if (document.getElementById('productGrid')) renderProductGrid('productGrid');
-    if (document.getElementById('featuredGrid')) renderProductGrid('featuredGrid', 8);
+    if (document.getElementById('productGrid')) await renderProductGrid('productGrid');
+    if (document.getElementById('featuredGrid')) await renderProductGrid('featuredGrid', 8);
     if (typeof initAdmin === 'function') initAdmin();
 };
 
@@ -394,4 +409,45 @@ async function changePassword() {
 function closeEditUserModal() {
     const modal = document.getElementById('editUserModal');
     if (modal) modal.style.display = 'none';
+}
+
+// --- Product Admin Functions ---
+async function dbAddProduct(payload) {
+    try {
+        const res = await fetch('/api/database', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'products', action: 'add', payload })
+        });
+        if (res.ok) {
+            alert('Product added to cloud inventory!');
+            await fetchProducts();
+            if (typeof renderAdminProducts === 'function') renderAdminProducts();
+            if (document.getElementById('productGrid')) renderProductGrid('productGrid');
+        } else {
+            alert('Failed to add product.');
+        }
+    } catch (e) {
+        console.error(e);
+        alert('Error connecting to database.');
+    }
+}
+
+async function dbDeleteProduct(id) {
+    if (!confirm('Permanently delete this product?')) return;
+    try {
+        const res = await fetch('/api/database', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'products', action: 'delete', payload: { id } })
+        });
+        if (res.ok) {
+            alert('Product removed.');
+            await fetchProducts();
+            if (typeof renderAdminProducts === 'function') renderAdminProducts();
+            if (document.getElementById('productGrid')) renderProductGrid('productGrid');
+        }
+    } catch (e) {
+        console.error(e);
+    }
 }

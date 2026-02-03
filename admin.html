@@ -51,6 +51,25 @@
                         <input type="text" id="pImg" placeholder="Image URL (Unsplash ID or Link)">
                         <button class="btn" onclick="addProduct()">Add to Inventory</button>
                     </div>
+
+                    <div style="margin-top: 20px;">
+                        <h4>Current <span>Inventory</span></h4>
+                        <div class="user-list-container">
+                            <table class="user-list">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Price</th>
+                                        <th>Preview</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminProductList">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
 
                 <div style="margin-top: 20px;">
@@ -116,6 +135,7 @@
 
         function initAdmin() {
             renderUsers();
+            renderAdminProducts();
         }
 
         function renderUsers() {
@@ -136,12 +156,35 @@
             }
         }
 
-        function addProduct() {
-            const name = document.getElementById('pName').value;
-            const price = document.getElementById('pPrice').value;
-            const img = document.getElementById('pImg').value || "https://images.unsplash.com/photo-1516257984877-a03a01ae1b89?auto=format&fit=crop&q=80&w=500";
+        async function renderAdminProducts() {
+            const list = document.getElementById('adminProductList');
+            if (list) {
+                list.innerHTML = dbProducts.map(p => `
+                    <tr>
+                        <td>${p.name}</td>
+                        <td>${p.price}</td>
+                        <td><img src="${p.img}" style="height: 30px; border-radius: 4px;"></td>
+                        <td>
+                            <button class="btn" style="padding: 5px 10px; font-size: 0.7rem; background: #cc0000; border-color: #cc0000;" onclick="dbDeleteProduct('${p.id}')">Del</button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        async function addProduct() {
+            const name = document.getElementById('pName').value.trim();
+            const price = document.getElementById('pPrice').value.trim();
+            const img = document.getElementById('pImg').value.trim() || "https://images.unsplash.com/photo-1516257984877-a03a01ae1b89?auto=format&fit=crop&q=80&w=500";
+            
             if (name && price) {
-                alert(`Added ${name} to internal catalog buffer!`);
+                await dbAddProduct({ name, price, img });
+                // Clear fields
+                document.getElementById('pName').value = '';
+                document.getElementById('pPrice').value = '';
+                document.getElementById('pImg').value = '';
+            } else {
+                alert("Please enter Name and Price.");
             }
         }
 
